@@ -26,7 +26,6 @@ import java.beans.FeatureDescriptor;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -118,13 +117,11 @@ public class ArticleServiceImpl implements ArticleService {
             article.setAuthors(new HashSet<>());
         }
         updateModel.getAuthors().stream().forEach(authorName -> {
-            Author author = authorRepository.findByFirstNameAndLastName(authorName.getFirstName(), authorName.getLastName());
-            if (null == author) {
-                author = new Author();
-                author.setArticles(new HashSet<>());
+            List<Author> author = authorRepository.findByFirstNameAndLastName(authorName.getFirstName(), authorName.getLastName());
+            for (Author result : author) {
+                copyProperties(authorName, result);
+                article.getAuthors().add(result);
             }
-            copyProperties(authorName, author);
-            article.getAuthors().add(author);
         });
     }
 

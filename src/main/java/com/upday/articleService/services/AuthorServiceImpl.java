@@ -27,12 +27,12 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Set<Article> getAuthor(AuthorQueryModel author) {
-        Set<Article> articleSet = mapDtoToEntity(author);
+        Set<Article> articleSet = mapAuthorToArticle(author);
         return articleSet;
     }
 
-    private Set<Article> mapDtoToEntity(AuthorQueryModel courseDto) {
-        List<Author> authorList = authorRepository.findByLastNameAndFirstName(courseDto.getLastName(), courseDto.getFirstName());
+    private Set<Article> mapAuthorToArticle(AuthorQueryModel courseDto) {
+        List<Author> authorList = authorRepository.findByFirstNameAndLastName(courseDto.getFirstName(), courseDto.getLastName());
         Set<Article> articleSet = new HashSet<>();
         authorList.stream().forEach(result -> {
             result.getArticles().stream().forEach(articleHeader -> {

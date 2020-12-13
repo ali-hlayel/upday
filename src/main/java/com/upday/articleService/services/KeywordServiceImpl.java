@@ -27,11 +27,11 @@ public class KeywordServiceImpl implements KeywordService{
 
     @Override
     public Set<Article> getKeyword(KeywordModel keywordModel) {
-        Set<Article> articleSet = mapDtoToEntity(keywordModel);
+        Set<Article> articleSet = mapKeyWordToArticle(keywordModel);
         return articleSet;
     }
 
-    private Set<Article> mapDtoToEntity(KeywordModel keywordModel) {
+    private Set<Article> mapKeyWordToArticle(KeywordModel keywordModel) {
         List<Keyword> keywordList = keywordRepository.findByKeyword(keywordModel.getKeyword());
         Set<Article> articleSet = new HashSet<>();
 

@@ -21,6 +21,5 @@ public class AuthorModel {
     @Schema(example = "Hlayel")
     private String lastName;
 
-    private Set<Article> articles = new HashSet<>();
 }
 

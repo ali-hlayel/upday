@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -52,8 +53,8 @@ public class ArticleController {
 
     @Operation(summary = "Get all Articles")
     @GetMapping(value = "/articles")
-    public ResponseEntity<List<ArticleModel>> getAllBooks(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                       @RequestParam(value = "limit", defaultValue = "10") int limit) {
+    public ResponseEntity<List<ArticleModel>> getAllAuthors(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                          @RequestParam(value = "limit", defaultValue = "10") int limit) {
 
         List<ArticleModel> results = new ArrayList<>();
         List<Article> articleList = articleService.getAllArticles(page, limit);
@@ -79,7 +80,7 @@ public class ArticleController {
     }
 
     @Operation(summary = "Get list of articles for a certain author")
-    @GetMapping("/author")
+    @GetMapping("/articles/author")
     public Set<Article> getArticleByAuthor(AuthorQueryModel requestModel) {
         Set<Article> result;
         result = authorService.getAuthor(requestModel);
@@ -87,10 +88,10 @@ public class ArticleController {
     }
 
     @Operation(summary = "Get list of articles for a certain keyWord")
-    @GetMapping("/keyword")
-    public Set<Article> getArticleByAuthor(KeywordModel requestModel) {
+    @GetMapping("/articles/keyword")
+    public Set<Article> getArticleByKeyword(KeywordModel model) {
         Set<Article> result;
-        result = keywordService.getKeyword(requestModel);
+        result = keywordService.getKeyword(model);
         return result;
     }
 
@@ -115,8 +116,6 @@ public class ArticleController {
             @Min(value = 1) @PathVariable Long id,
             @Valid @RequestBody ArticleRequestUpdateModel articleRequestUpdateModel
     ) throws ServiceResponseException {
-
-
         Article result;
         try {
             result = articleService.update(id, articleRequestUpdateModel);
@@ -125,7 +124,6 @@ public class ArticleController {
             String message = "Could not update a channel: " + e.getMessage();
             LOGGER.error(message, e);
             throw new BadRequestException(message, e);
-
         }
     }
 

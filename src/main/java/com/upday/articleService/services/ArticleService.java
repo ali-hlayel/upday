@@ -5,7 +5,6 @@ import com.upday.articleService.config.exceptions.MissingPrerequisiteException;
 import com.upday.articleService.entities.Article;
 import com.upday.articleService.models.ArticleRequestUpdateModel;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.NoResultException;
 import java.util.List;
