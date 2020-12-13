@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,13 +29,13 @@ public class Article {
     private String text;
 
     @NotNull
-    private Date publishDate;
+    private LocalDate publishDate;
 
     @NotNull
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "article_author",
             joinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"))
+            inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"))
     private Set<Author> authors = new HashSet<>();
 
     @NotNull
@@ -43,5 +43,6 @@ public class Article {
     @JoinTable(name = "article_keyword",
             joinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "keyword_id", referencedColumnName = "id"))
-    private Set<KeyWord> keywords = new HashSet<>();
+    private Set<Keyword> keywords = new HashSet<>();
+
 }
