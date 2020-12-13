@@ -5,7 +5,7 @@ import com.upday.articleService.config.exceptions.MissingPrerequisiteException;
 import com.upday.articleService.entities.Article;
 import com.upday.articleService.entities.Author;
 import com.upday.articleService.entities.Keyword;
-import com.upday.articleService.models.ArticleRequestUpdateModel;
+import com.upday.articleService.requests.ArticleRequestUpdateModel;
 import com.upday.articleService.repositories.ArticleRepository;
 import com.upday.articleService.repositories.AuthorRepository;
 import com.upday.articleService.repositories.KeywordRepository;
@@ -40,13 +40,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Resource
     private KeywordRepository keyWordRepository;
-
-    public Article getOne(Specification<Article> specification) {
-        Article result = articleRepository.findOne(specification).orElseThrow(
-                () -> new NoResultException("No Article found for the given search parameters")
-        );
-        return result;
-    }
 
     @Override
     public List<Article> get(Specification<Article> specification) throws NoResultException {

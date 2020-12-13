@@ -2,7 +2,9 @@ package com.upday.articleService.controllers;
 
 import com.upday.articleService.config.exceptions.*;
 import com.upday.articleService.entities.Article;
+import com.upday.articleService.mappers.ArticleMapper;
 import com.upday.articleService.models.*;
+import com.upday.articleService.requests.*;
 import com.upday.articleService.services.ArticleService;
 import com.upday.articleService.services.AuthorService;
 import com.upday.articleService.services.KeywordService;
@@ -53,15 +55,9 @@ public class ArticleController {
 
     @Operation(summary = "Get all Articles")
     @GetMapping(value = "/articles")
-    public ResponseEntity<List<ArticleModel>> getAllAuthors(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                          @RequestParam(value = "limit", defaultValue = "10") int limit) {
-
-        List<ArticleModel> results = new ArrayList<>();
-        List<Article> articleList = articleService.getAllArticles(page, limit);
-        ModelMapper modelMapper = new ModelMapper();
-        for (Article article : articleList) {
-            results.add(modelMapper.map(article, ArticleModel.class));
-        }
+    public ResponseEntity<List<Article>> getAllAuthors(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                       @RequestParam(value = "limit", defaultValue = "10") int limit) {
+        List<Article> results = articleService.getAllArticles(page, limit);
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
@@ -89,17 +85,19 @@ public class ArticleController {
 
     @Operation(summary = "Get list of articles for a certain keyWord")
     @GetMapping("/articles/keyword")
-    public Set<Article> getArticleByKeyword(KeywordModel model) {
+    public Set<Article> getArticleByKeyword(KeywordQueryModel requestModel) {
         Set<Article> result;
+        KeywordModel model = new KeywordModel();
+        BeanUtils.copyProperties(requestModel, model);
         result = keywordService.getKeyword(model);
         return result;
     }
 
     @Operation(summary = "Creates new article")
     @PostMapping("/article")
-    public ResponseEntity<Article> createArticle(@Valid @RequestBody ArticleModel createModel) throws ServiceResponseException {
+    public ResponseEntity<Article> createArticle(@Valid @RequestBody ArticleRequestCreateModel model) throws ServiceResponseException {
         Article result;
-        Article article = articleMapper.articleModelToArticleEntity(createModel);
+        Article article = articleMapper.articleModelToArticleEntity(model);
         try {
             result = articleService.create(article);
             return new ResponseEntity<>(result, HttpStatus.CREATED);

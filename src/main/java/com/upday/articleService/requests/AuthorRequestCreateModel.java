@@ -1,12 +1,14 @@
-package com.upday.articleService.models;
+package com.upday.articleService.requests;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.validation.constraints.NotBlank;
-@Getter
+
 @Setter
-public class AuthorQueryModel {
+@Getter
+public class AuthorRequestCreateModel {
 
     @NotBlank
     @Schema(example = "Ali")

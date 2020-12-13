@@ -1,16 +1,19 @@
-package com.upday.articleService.models;
+package com.upday.articleService.requests;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-
-@Setter
+import javax.validation.constraints.NotBlank;
 @Getter
-public class AuthorRequestUpdateModel {
+@Setter
+public class AuthorQueryModel {
 
+    @NotBlank
     @Schema(example = "Ali")
     private String firstName;
 
+    @NotBlank
     @Schema(example = "Hlayel")
     private String lastName;
+
 }

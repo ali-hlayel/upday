@@ -2,7 +2,7 @@ package com.upday.articleService.controllers;
 
 import com.upday.articleService.config.exceptions.GlobalExceptionHandler;
 import com.upday.articleService.entities.Article;
-import com.upday.articleService.models.ArticleMapper;
+import com.upday.articleService.mappers.ArticleMapper;
 import com.upday.articleService.models.ArticleTestFactory;
 import com.upday.articleService.services.ArticleService;
 import com.upday.articleService.services.AuthorService;
@@ -16,7 +16,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.Arrays;
 import java.util.List;
 

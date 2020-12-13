@@ -1,4 +1,4 @@
-package com.upday.articleService.models;
+package com.upday.articleService.requests;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

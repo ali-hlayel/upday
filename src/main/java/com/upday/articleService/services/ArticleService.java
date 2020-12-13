@@ -3,7 +3,7 @@ package com.upday.articleService.services;
 import com.upday.articleService.config.exceptions.EntityAlreadyExistsException;
 import com.upday.articleService.config.exceptions.MissingPrerequisiteException;
 import com.upday.articleService.entities.Article;
-import com.upday.articleService.models.ArticleRequestUpdateModel;
+import com.upday.articleService.requests.ArticleRequestUpdateModel;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.NoResultException;

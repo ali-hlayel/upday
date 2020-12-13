@@ -2,7 +2,7 @@ package com.upday.articleService.services;
 
 import com.upday.articleService.entities.Article;
 import com.upday.articleService.entities.Author;
-import com.upday.articleService.models.AuthorQueryModel;
+import com.upday.articleService.requests.AuthorQueryModel;
 import com.upday.articleService.repositories.ArticleRepository;
 import com.upday.articleService.repositories.AuthorRepository;
 import com.upday.articleService.repositories.KeywordRepository;
