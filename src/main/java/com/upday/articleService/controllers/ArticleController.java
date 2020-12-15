@@ -68,7 +68,7 @@ public class ArticleController {
         } catch (NoResultException e) {
             String message = e.getMessage() + params.getPublishDateFrom() + " To: " + params.getPublishDateTo();
             LOGGER.error(message, e);
-            throw new BadRequestException(message, e);
+            throw new NotFoundException(message, e);
         }
     }
 
@@ -89,11 +89,18 @@ public class ArticleController {
 
     @Operation(summary = "Get list of articles for a certain keyWord")
     @GetMapping("/articles/keyword")
-    public Set<Article> getArticleByKeyword(KeywordQueryModel requestModel) {
+    public Set<Article> getArticleByKeyword(KeywordQueryModel requestModel) throws ServiceResponseException {
         Set<Article> result;
         KeywordModel model = new KeywordModel();
         BeanUtils.copyProperties(requestModel, model);
+        try {
         result = keywordService.getKeyword(model);
+        } catch (NoResultException e) {
+            String message = "Could not find articles for keyword " + model.getKeyword() + " " +
+                    ": " + e.getMessage();
+            LOGGER.error(message, e);
+            throw new NotFoundException(message, e);
+        }
         return result;
     }
 
@@ -134,7 +141,8 @@ public class ArticleController {
 
     @Operation(summary = "Deletes a single article by Id")
     @DeleteMapping("/article/{id}")
-    public ResponseEntity<?> deleteArticle(@Min(value = 1) @PathVariable Long id) throws ServiceResponseException {
+    public ResponseEntity<Article> deleteArticle(@Min(value = 1) @PathVariable Long id) throws ServiceResponseException {
+
         try {
             articleService.delete(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
