@@ -32,11 +32,9 @@ public class KeywordServiceImpl implements KeywordService{
     }
 
     private Set<Article> mapKeyWordToArticle(KeywordModel keywordModel) {
-        List<Keyword> keywordList = keywordRepository.findByKeyword(keywordModel.getKeyword());
+        Keyword keyword = keywordRepository.findByKeyword(keywordModel.getKeyword());
         Set<Article> articleSet = new HashSet<>();
-
-        keywordList.stream().forEach(result -> {
-            result.getArticles().stream().forEach(articleHeader -> {
+            keyword.getArticles().stream().forEach(articleHeader -> {
                 Article article = articleRepository.findByHeader(articleHeader.getHeader());
                 if (null == article) {
                     article = new Article();
@@ -44,7 +42,7 @@ public class KeywordServiceImpl implements KeywordService{
                 }
                 articleSet.add(article);
             });
-        });
+
         return articleSet;
     }
 }

@@ -5,6 +5,8 @@ import com.upday.articleService.config.exceptions.MissingPrerequisiteException;
 import com.upday.articleService.entities.Article;
 import com.upday.articleService.entities.Author;
 import com.upday.articleService.entities.Keyword;
+import com.upday.articleService.mappers.ArticleMapper;
+import com.upday.articleService.requests.ArticleRequestCreateModel;
 import com.upday.articleService.requests.ArticleRequestUpdateModel;
 import com.upday.articleService.repositories.ArticleRepository;
 import com.upday.articleService.repositories.AuthorRepository;
@@ -41,6 +43,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Resource
     private KeywordRepository keyWordRepository;
 
+    private ArticleMapper articleMapper;
+
     @Override
     public List<Article> get(Specification<Article> specification) throws NoResultException {
         List<Article> articleList = articleRepository.findAll(specification);
@@ -61,14 +65,15 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public Article create(Article article) throws MissingPrerequisiteException, EntityAlreadyExistsException {
+    public Article create(ArticleRequestCreateModel createModel) throws MissingPrerequisiteException, EntityAlreadyExistsException {
         Article result;
+        Article article = articleMapper.articleModelToArticleEntity(createModel);
         if (article.getHeader() == null) {
             throw new MissingPrerequisiteException("Can't create Article without  " + article.getHeader());
         }
 
         if (article.getAuthors() == null) {
-            throw new MissingPrerequisiteException("Can't create Article:  " + article.getHeader() + "Please the Publisher name.");
+            throw new MissingPrerequisiteException("Can't create Article:  " + article.getHeader() + "Please add the author name.");
         }
 
         if (articleRepository.existsByHeader(article.getHeader())) {
@@ -110,11 +115,11 @@ public class ArticleServiceImpl implements ArticleService {
             article.setAuthors(new HashSet<>());
         }
         updateModel.getAuthors().stream().forEach(authorName -> {
-            List<Author> author = authorRepository.findByFirstNameAndLastName(authorName.getFirstName(), authorName.getLastName());
-            for (Author result : author) {
-                copyProperties(authorName, result);
-                article.getAuthors().add(result);
-            }
+            Author author = authorRepository.findByFirstNameAndLastName(authorName.getFirstName(), authorName.getLastName());
+
+                copyProperties(authorName, author);
+                article.getAuthors().add(author);
+
         });
     }
 
@@ -124,11 +129,10 @@ public class ArticleServiceImpl implements ArticleService {
             article.setKeywords(new HashSet<>());
         }
         updateModel.getKeywords().stream().forEach(updatedKeyword -> {
-            List<Keyword> keyword = keyWordRepository.findByKeyword(updatedKeyword.getKeyword());
-            for (Keyword result : keyword) {
-                copyProperties(updatedKeyword, result);
-                article.getKeywords().add(result);
-            }
+            Keyword keyword = keyWordRepository.findByKeyword(updatedKeyword.getKeyword());
+                copyProperties(updatedKeyword, keyword);
+                article.getKeywords().add(keyword);
+
         });
     }
 

@@ -37,8 +37,6 @@ public class ArticleController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Article.class);
 
-    private final ArticleMapper articleMapper;
-
     private final ArticleService articleService;
 
     private final AuthorService authorService;
@@ -46,8 +44,7 @@ public class ArticleController {
     private final KeywordService keywordService;
 
     @Autowired
-    public ArticleController(ArticleMapper articleMapper, ArticleService articleService, AuthorService authorService, KeywordService keywordService) {
-        this.articleMapper = articleMapper;
+    public ArticleController(ArticleService articleService, AuthorService authorService, KeywordService keywordService) {
         this.articleService = articleService;
         this.authorService = authorService;
         this.keywordService = keywordService;
@@ -77,9 +74,16 @@ public class ArticleController {
 
     @Operation(summary = "Get list of articles for a certain author")
     @GetMapping("/articles/author")
-    public Set<Article> getArticleByAuthor(AuthorQueryModel requestModel) {
+    public Set<Article> getArticleByAuthor(AuthorQueryModel requestModel) throws ServiceResponseException {
         Set<Article> result;
-        result = authorService.getAuthor(requestModel);
+        try {
+            result = authorService.getAuthor(requestModel);
+        } catch (NoResultException e) {
+            String message = "Could not find articles for author " + requestModel.getFirstName() + " " +
+                    requestModel.getLastName() + ": " + e.getMessage();
+            LOGGER.error(message, e);
+            throw new NotFoundException(message, e);
+        }
         return result;
     }
 
@@ -97,14 +101,17 @@ public class ArticleController {
     @PostMapping("/article")
     public ResponseEntity<Article> createArticle(@Valid @RequestBody ArticleRequestCreateModel model) throws ServiceResponseException {
         Article result;
-        Article article = articleMapper.articleModelToArticleEntity(model);
         try {
-            result = articleService.create(article);
+            result = articleService.create(model);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (EntityAlreadyExistsException | MissingPrerequisiteException e) {
-            String message = "Could not create a Book: " + e.getMessage();
+        } catch (EntityAlreadyExistsException e) {
+            String message = "Could not create article: " + e.getMessage();
             LOGGER.error(message, e);
             throw new UnprocessableEntityException(message, e);
+        } catch (MissingPrerequisiteException e) {
+            String message = "Could not create article: " + e.getMessage();
+            LOGGER.error(message, e);
+            throw new ConflictException(message, e);
         }
     }
 

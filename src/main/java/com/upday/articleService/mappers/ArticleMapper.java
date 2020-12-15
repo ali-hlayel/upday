@@ -7,6 +7,7 @@ import com.upday.articleService.models.ArticleModel;
 import com.upday.articleService.models.AuthorModel;
 import com.upday.articleService.models.KeywordModel;
 import com.upday.articleService.repositories.AuthorRepository;
+import com.upday.articleService.repositories.KeywordRepository;
 import com.upday.articleService.requests.ArticleRequestCreateModel;
 import com.upday.articleService.requests.AuthorRequestCreateModel;
 import com.upday.articleService.requests.KeywordRequestCreateModel;
@@ -22,6 +23,9 @@ public class ArticleMapper {
 
     @Resource
     private AuthorRepository authorRepository;
+
+    @Resource
+    private KeywordRepository keywordRepository;
 
     public Article articleModelToArticleEntity(ArticleRequestCreateModel articleModel) {
         Article article = new Article();
@@ -41,9 +45,16 @@ public class ArticleMapper {
 
         Set<Keyword> keywordSet = new HashSet<>();
         for (KeywordRequestCreateModel keyWordModel : articleModel.getKeywords()) {
-            Keyword keyWord = new Keyword();
-            BeanUtils.copyProperties(keyWordModel, keyWord);
-            keywordSet.add(keyWord);
+
+            if (keywordRepository.existsByKeyword(keyWordModel.getKeyword())) {
+                Keyword keyword;
+                keyword = keywordRepository.findByKeyword(keyWordModel.getKeyword());
+                keywordSet.add(keyword);
+            } else {
+                Keyword keyWord = new Keyword();
+                BeanUtils.copyProperties(keyWordModel, keyWord);
+                keywordSet.add(keyWord);
+            }
         }
         article.setAuthors(authorSet);
         article.setKeywords(keywordSet);

@@ -9,8 +9,10 @@ import com.upday.articleService.repositories.KeywordRepository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service("authorService")
@@ -26,16 +28,16 @@ public class AuthorServiceImpl implements AuthorService {
     private KeywordRepository keywordRepository;
 
     @Override
-    public Set<Article> getAuthor(AuthorQueryModel author) {
-        Set<Article> articleSet = mapAuthorToArticle(author);
-        return articleSet;
-    }
+    public Set<Article> getAuthor(AuthorQueryModel model) throws NoResultException {
 
-    private Set<Article> mapAuthorToArticle(AuthorQueryModel courseDto) {
-        List<Author> authorList = authorRepository.findByFirstNameAndLastName(courseDto.getFirstName(), courseDto.getLastName());
+        Optional<Author> optionalAuthor = Optional.ofNullable(authorRepository.findByFirstNameAndLastName(model.getFirstName(), model.getLastName()));
+        if (!optionalAuthor.isPresent()) {
+            throw new NoResultException("Could not find any article ");
+        }
+        Author result = optionalAuthor.get();
         Set<Article> articleSet = new HashSet<>();
-        authorList.stream().forEach(result -> {
-            result.getArticles().stream().forEach(articleHeader -> {
+
+        result.getArticles().stream().forEach(articleHeader -> {
                 Article article = articleRepository.findByHeader(articleHeader.getHeader());
                 if (null == article) {
                     article = new Article();
@@ -43,7 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
                 }
                 articleSet.add(article);
             });
-        });
+
         return articleSet;
     }
 }

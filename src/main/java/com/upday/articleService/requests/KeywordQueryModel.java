@@ -11,10 +11,6 @@ import javax.validation.constraints.NotBlank;
 public class KeywordQueryModel {
 
     @NotBlank
-    @Schema(example = "Ali")
-    private String firstName;
-
-    @NotBlank
-    @Schema(example = "Hlayel")
-    private String lastName;
+    @Schema(example = "COVAID-19")
+    private String keyword;
 }
