@@ -9,14 +9,22 @@ import com.upday.articleService.models.KeywordModel;
 import com.upday.articleService.repositories.AuthorRepository;
 import com.upday.articleService.repositories.KeywordRepository;
 import com.upday.articleService.requests.ArticleRequestCreateModel;
+import com.upday.articleService.requests.ArticleRequestUpdateModel;
 import com.upday.articleService.requests.AuthorRequestCreateModel;
 import com.upday.articleService.requests.KeywordRequestCreateModel;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.beans.FeatureDescriptor;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class ArticleMapper {

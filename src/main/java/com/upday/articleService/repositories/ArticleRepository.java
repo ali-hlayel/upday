@@ -10,5 +10,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 
     boolean existsByHeader(String name);
 
-    Article  findByHeader(String header);
+    Article findByHeader(String header);
 }

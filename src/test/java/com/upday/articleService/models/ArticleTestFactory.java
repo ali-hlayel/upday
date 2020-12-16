@@ -29,7 +29,6 @@ public class ArticleTestFactory {
         article.setPublishDate(LocalDate.of(2020, 12, 12));
         article.setText("text heere is a text");
 
-
         AuthorRequestCreateModel author = new AuthorRequestCreateModel();
         author.setFirstName("Ali");
         author.setLastName("Hlayel");
