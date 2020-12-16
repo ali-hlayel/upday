@@ -2,14 +2,12 @@ package com.upday.articleService.controllers;
 
 import com.upday.articleService.config.exceptions.*;
 import com.upday.articleService.entities.Article;
-import com.upday.articleService.mappers.ArticleMapper;
 import com.upday.articleService.models.*;
 import com.upday.articleService.requests.*;
 import com.upday.articleService.services.ArticleService;
 import com.upday.articleService.services.AuthorService;
 import com.upday.articleService.services.KeywordService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -36,11 +34,11 @@ public class ArticleController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Article.class);
 
-    private final ArticleService articleService;
+    private  ArticleService articleService;
 
-    private final AuthorService authorService;
+    private  AuthorService authorService;
 
-    private final KeywordService keywordService;
+    private  KeywordService keywordService;
 
     @Autowired
     public ArticleController(ArticleService articleService, AuthorService authorService, KeywordService keywordService) {

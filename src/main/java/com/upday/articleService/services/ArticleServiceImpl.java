@@ -45,6 +45,17 @@ public class ArticleServiceImpl implements ArticleService {
 
     private ArticleMapper articleMapper;
 
+    public ArticleServiceImpl(ArticleRepository articleRepository,
+                              AuthorRepository authorRepository,
+                              KeywordRepository keyWordRepository,
+                              ArticleMapper articleMapper) {
+        super();
+        this.articleRepository = articleRepository;
+        this.authorRepository = authorRepository;
+        this.keyWordRepository = keyWordRepository;
+        this.articleMapper = articleMapper;
+    }
+
     @Override
     public List<Article> get(Specification<Article> specification) throws NoResultException {
         List<Article> articleList = articleRepository.findAll(specification);
@@ -90,11 +101,8 @@ public class ArticleServiceImpl implements ArticleService {
         Article existingArticle = articleRepository.findById(id).orElseThrow(
                 () -> new NoResultException("Could not find Article with id " + id)
         );
-        existingArticle.getAuthors().clear();
-        handleAuthors(updatedArticle, existingArticle);
-
-        existingArticle.getKeywords().clear();
-        handleKeyword(updatedArticle, existingArticle);
+        copyProperties(updatedArticle, existingArticle);
+        handleArticleAuthorAndKeyWord(updatedArticle, existingArticle);
         Article result = articleRepository.save(existingArticle);
         return result;
     }
@@ -105,35 +113,34 @@ public class ArticleServiceImpl implements ArticleService {
         Article result = articleRepository.findById(id).orElseThrow(
                 () -> new NoResultException("Could not find article with id " + id)
         );
-
         articleRepository.delete(result);
     }
 
-    private void handleAuthors(ArticleRequestUpdateModel updateModel, Article article) {
-        copyProperties(updateModel, article);
-        if (null == article.getAuthors()) {
-            article.setAuthors(new HashSet<>());
-        }
-        updateModel.getAuthors().stream().forEach(authorName -> {
-            Author author = authorRepository.findByFirstNameAndLastName(authorName.getFirstName(), authorName.getLastName());
-
+    private void handleArticleAuthorAndKeyWord(ArticleRequestUpdateModel updateModel, Article article) {
+        if (!updateModel.getAuthors().isEmpty()) {
+            article.getAuthors().clear();
+            updateModel.getAuthors().stream().forEach(authorName -> {
+                Author author = authorRepository.findByFirstNameAndLastName(authorName.getFirstName(), authorName.getLastName());
+                if (author == null) {
+                    author = new Author();
+                }
                 copyProperties(authorName, author);
                 article.getAuthors().add(author);
 
-        });
-    }
-
-    private void handleKeyword(ArticleRequestUpdateModel updateModel, Article article) {
-        copyProperties(updateModel, article);
-        if (null == article.getKeywords()) {
-            article.setKeywords(new HashSet<>());
+            });
         }
-        updateModel.getKeywords().stream().forEach(updatedKeyword -> {
-            Keyword keyword = keyWordRepository.findByKeyword(updatedKeyword.getKeyword());
+        if (!updateModel.getKeywords().isEmpty()) {
+            article.getKeywords().clear();
+            updateModel.getKeywords().stream().forEach(updatedKeyword -> {
+                Keyword keyword = keyWordRepository.findByKeyword(updatedKeyword.getKeyword());
+                if (keyword == null) {
+                    keyword = new Keyword();
+                }
                 copyProperties(updatedKeyword, keyword);
                 article.getKeywords().add(keyword);
 
-        });
+            });
+        }
     }
 
     protected void copyProperties(Object updatedEntity, Object existingEntity, String... excludedProperties) {
